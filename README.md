@@ -56,7 +56,7 @@ You can also change the threshold values to match this new system. We could say 
 
 ## Usage
 
-ex.py uses a really simple grammar which is described at the top of  [ex.py]. This grammar should help you linearly construct complex formulas one step at a time. This lets you design the formulas naturally instead of needing to continually wrapping your starting command in increasingly complex commands.
+ex.py uses a really simple grammar which is described at the top of  [ex.py](ex.py). This grammar should help you linearly construct complex formulas one step at a time. This lets you design the formulas naturally instead of needing to continually wrapping your starting command in increasingly complex commands.
 
 You can pass ex.py a file using command line args:
 
@@ -70,6 +70,8 @@ If no command line args are passed, ex.py enters an "interpreter" mode where you
 
 A valid ex.py script is just defined as a simple list of statements. Each statement can only take up one line and must end with a new line. There are only 2 kinds of statements in this language. Those are assignment statements and return statements.
 
+#### Assignment
+
 An assignment statement allows you to set the value of a variable. This generally takes the form of:
 
 ```python
@@ -79,20 +81,67 @@ name = value
 The value on the right hand side can be any combination of valid formula expressions or any variable that was previously defined. For example:
 
 ```python
-heights = B2:B1000
-ages = C2:C1000
-
-avg = AVERAGE(heights)
-under_12_avg = AVERAGEIFS(heights, ages, "<=12")
-avg_dif = avg - under_12_avg
-
-is_extreme = OR(avg_dif > 36, avg_dif < 16)
-is_expected = AND(avg_dif > 31, avg_dif > 21)
-expected_str = "Expected" if is_expected else "Extreme" if is_extreme else "Unexpected"
-return expected_str & " Difference: " & avg_dif if NOT(is_expected) else expected_str 
+No input files detected. Enter code manually:
+> cell = A1 
+> cell = 5 + cell
+> return cell
+=5+A1
 ```
 
-This snippet will assign the value 
+This snippet will assign the value `A1` to the variable `cell`. The variable is then updated to the value of `5 + cell`. Since `cell` was previously `A1` it is now `5 + A1`.
+
+#### Return
+
+A return statement will evaluate whatever expression it was given and print it to the terminal in the form on a Google Sheets formula. A return statement doesn't have to include the word return. For example:
+
+```python
+No input files detected. Enter code manually:
+> cells = A1:A1000
+> cells
+=A1:A1000
+
+> return cells
+=A1:A1000
+```
+
+Here you can see that entering `cells` is not any different than entering `return cells`. The return keyword is just added for clarity so you can easily identify the outputs. You can also have multiple return statements in one script. You could for example create a script called `test.expy`:
+
+```python
+cell1 = A1
+cell2 = B1
+return cell1 + cell2
+return cell1 - cell2
+return "EQUAL" if cell1 = cell2 else "NOT EQUAL"
+```
+
+Running this file through ex.py would give you:
+
+```
+Found return on line 3: "return cell1 + cell2." Result is:
+=A1+B1
+
+Found return on line 4: "return cell1 - cell2." Result is:
+=A1-B1
+
+Found return on line 5: "return "EQUAL" if cell1 = cell2 else "NOT EQUAL"." Result is:
+=IF(A1=B1,"EQUAL","NOT EQUAL")
+```
+
+#### Expressions
+
+Most normal Google Sheets expressions are supported. This includes arithmetic operators `+, -, *, /`, logical operators `<, >, <=, >=, <>, =`, constants `A1, A1:A10, $A$1, Sheet1!A1, Sheet1!A1:A10, 'Sheet With Spaces'!A1:A10, 1, 3.14, "Strings", TRUE, FALSE`, the string concatenation operator `&`, and functions `INDEX(), AVERAGE(), SUM(), etc`. These can be chained to form arbitrarily complex expressions.
+
+On top of standard `IF(condition, true_value, false_value)`, you can also use ternary expressions. I find the standard ordering of spreadsheet if statements to be really hard to follow. This only gets worse the more complex your branching is. I much prefer to write:
+
+```
+true_value if condition else false_value
+```
+
+You can chain these together of course to do something like:
+
+```
+"Super Cool" if name = "Zach" else "Pretty Cool" if name = "Scott" else "Not Cool"
+```
 
 ## License
 

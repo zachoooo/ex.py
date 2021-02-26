@@ -16,7 +16,7 @@ assign_stmt: factor "=" exp_list
 ?rel_exp: rel_exp REL_OP sum_exp | sum_exp
 ?sum_exp: sum_exp SUM_OP mul_exp | mul_exp
 ?mul_exp: mul_exp MUL_OP factor | factor
-REL_OP: ">=" | "<=" | "<>" "=" | ">" | "<"
+REL_OP: ">=" | "<=" | "<>" | "=" | ">" | "<"
 SUM_OP: "+" | "-"
 MUL_OP: "*" | "/"
 ?factor: immutable | mutable 
@@ -29,7 +29,7 @@ constant: CELL | CELL_RANGE | BOOL | NUMBER | ESCAPED_STRING | SHEET
 
 SYMBOL: LETTER_OR_UNDERSCORE (ALPHA_NUM | "_" )*
 EXCEL_SYMBOL: LETTER LETTER*
-CELL: "$"? LETTER LETTER* "$"? NUMBER
+CELL: "$"? LETTER~1..3 "$"? NUMBER
 CELL_RANGE: CELL ":" CELL
 CELL_OR_RANGE: CELL_RANGE | CELL
 SHEET: ALPHA_NUM "!" CELL_OR_RANGE | /'[^']+'!/ CELL_OR_RANGE
@@ -70,7 +70,10 @@ def traverse(tree, interpreted=False):
         if t == "assign_stmt":
             child = get_deepest_child(tree)
             var = child.value
-            if child.type != "SYMBOL":
+            dbg_print(f"Type is: {child.type}")
+            if child.type == "CELL":
+                print(f"Warning! Variable {var} could collide with a valid cell!")
+            elif child.type != "SYMBOL":
                 print(f"Left hand side is not assignable!")
                 return ""
             symbol_table[var] = traverse(tree.children[1], interpreted)
