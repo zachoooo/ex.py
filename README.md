@@ -1,12 +1,14 @@
-# ex.py
+<div align="center">
+  <img src="https://github.com/zachoooo/ex.py/raw/main/assets/logo.png">
 
-ex.py helps you make Google Sheets (and Excel) formulas more easily!
-
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![License][license-shield]][license-url]
+  ex.py helps you make Google Sheets (and Excel) formulas more easily!
+  
+  [![Contributors][contributors-shield]][contributors-url]
+  [![Forks][forks-shield]][forks-url]
+  [![Stargazers][stars-shield]][stars-url]
+  [![Issues][issues-shield]][issues-url]
+  [![License][license-shield]][license-url]</center>
+</div>
 
 ## About
 
