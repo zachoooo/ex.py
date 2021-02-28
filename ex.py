@@ -6,9 +6,11 @@ import traceback
 GRAMMAR = r"""
 start: stmt_list
 stmt_list: stmt | stmt_list "\n" stmt |
-?stmt: assign_stmt | return_stmt
+?stmt: quit_stmt | assign_stmt | return_stmt | delete_stmt
 return_stmt: "return" exp_list | exp_list
 assign_stmt: factor "=" exp_list
+delete_stmt: "del" factor
+quit_stmt: "quit"
 ?exp: ternary_exp
 ?exp_list: exp_list "," exp | exp
 ?ternary_exp: ternary_exp "if" ternary_exp "else" ternary_exp | concat_exp
@@ -53,6 +55,9 @@ def dbg_print(str):
     if DEBUG:
         print(str)
 
+def err(str):
+    print(f"ERROR: {str}")
+
 def get_deepest_child(tree):
     if tree is None:
         return None
@@ -72,13 +77,30 @@ def traverse(tree, interpreted=False):
             var = child.value
             dbg_print(f"Type is: {child.type}")
             if child.type == "CELL":
-                print(f"Warning! Variable {var} could collide with a valid cell!")
+                err(f"Variable {var} could collide with a valid cell!")
+                return ""
             elif child.type != "SYMBOL":
-                print(f"Left hand side is not assignable!")
+                err(f"Left hand side is not assignable!")
                 return ""
             symbol_table[var] = traverse(tree.children[1], interpreted)
             dbg_print(symbol_table)
             return ""
+        elif t == "delete_stmt":
+            child = get_deepest_child(tree)
+            var = child.value
+            if child.type != "SYMBOL":
+                err(f"Cannot delete constant {var}!")
+                return ""
+            elif not var in symbol_table:
+                err(f"Cannot delete undefined variable {var}!")
+                return ""
+            del symbol_table[var]
+            dbg_print(symbol_table)
+            print(f"Deleted variable {var}.")
+            return ""
+        elif t == "quit_stmt":
+            print("Exiting ex.py... Goodbye!")
+            quit()
         elif t == "constant":
             return traverse(tree.children[0], interpreted)
         elif t == "call":

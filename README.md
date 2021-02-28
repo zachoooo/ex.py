@@ -129,6 +129,33 @@ Found return on line 5: "return "EQUAL" if cell1 = cell2 else "NOT EQUAL"." Resu
 =IF(A1=B1,"EQUAL","NOT EQUAL")
 ```
 
+#### Delete
+
+A delete statement will clear the variable entered from the symbol table. Delete can only be called on a valid symbol and will not work on constants. Here is an example:
+
+```python
+No input files detected. Enter code manually:
+> A = 5
+> return A
+=5
+
+> del A
+Deleted variable A.
+> return A
+WARNING: Received symbol A, but it doesn't seem to be defined.
+=A
+```
+
+#### Quit
+
+A quit statement will just exit the program allowing you to resume using your terminal. Here is an example:
+
+```python
+No input files detected. Enter code manually:
+> quit
+Exiting ex.py... Goodbye!
+```
+
 #### Expressions
 
 Most normal Google Sheets expressions are supported. This includes arithmetic operators `+, -, *, /`, logical operators `<, >, <=, >=, <>, =`, constants `A1, A1:A10, $A$1, Sheet1!A1, Sheet1!A1:A10, 'Sheet With Spaces'!A1:A10, 1, 3.14, "Strings", TRUE, FALSE`, the string concatenation operator `&`, and functions `INDEX(), AVERAGE(), SUM(), etc`. These can be chained to form arbitrarily complex expressions.
